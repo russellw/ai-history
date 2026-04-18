@@ -111,7 +111,7 @@ def convert(input_path: str, output_file):
 
 def main():
     parser = argparse.ArgumentParser(description="Convert Claude history JSON to grep-friendly text.")
-    parser.add_argument("-i", "--input", default="conversations.json", help="Input JSON file (default: conversations.json)")
+    parser.add_argument("-i", "--input", default="Claude/conversations.json", help="Input JSON file (default: Claude/conversations.json)")
     parser.add_argument("-o", "--output", default="conversations.txt", help="Output text file (default: conversations.txt)")
     parser.add_argument("--stdout", action="store_true", help="Write to stdout instead of a file")
     args = parser.parse_args()
