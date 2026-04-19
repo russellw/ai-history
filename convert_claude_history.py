@@ -3,10 +3,10 @@
 Convert Claude chat history JSON to a grep-friendly text format.
 
 Usage:
-    python3 convert_history.py                        # outputs to conversations.txt
-    python3 convert_history.py -o output.txt          # custom output file
-    python3 convert_history.py --stdout               # print to stdout
-    python3 convert_history.py -i other.json          # custom input file
+    python3 convert_claude_history.py                        # outputs to conversations/Claude.txt
+    python3 convert_claude_history.py -o output.txt          # custom output file
+    python3 convert_claude_history.py --stdout               # print to stdout
+    python3 convert_claude_history.py -i other.json          # custom input file
 """
 
 import json
