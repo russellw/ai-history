@@ -120,7 +120,7 @@ def main():
         convert(args.input, sys.stdout)
     else:
         print(f"Converting {args.input} -> {args.output} ...", file=sys.stderr)
-        with open(args.output, "w", encoding="utf-8") as out:
+        with open(args.output, "w", encoding="utf-8", newline="\n") as out:
             convert(args.input, out)
         print(f"Output written to {args.output}", file=sys.stderr)
 
