@@ -7,7 +7,7 @@ This repo converts AI chat history exports into a grep-friendly plain text forma
 
 # Directory structure
 
-- `convert_claude_history.py` — converts Claude export (`Claude/conversations.json`) → `conversations/Claude.txt`
+- `convert_claude_history.py` — converts Claude export (`Claude/*.zip`) → `conversations/Claude.txt`
 - `convert_chatgpt_history.py` — converts ChatGPT export (`ChatGPT/conversations-*.json`) → `conversations/ChatGPT.txt`
 - `Claude/` — Claude export data (gitignored)
 - `ChatGPT/` — ChatGPT export data (gitignored); multiple numbered JSON files plus supporting assets
@@ -27,6 +27,6 @@ Then each message:
 
 # Provider-specific notes
 
-Claude: flat list of conversations in one JSON file; messages are a flat list with `sender` field; timestamps are ISO strings; content is a list of typed blocks (`text`, `tool_use`, `tool_result`).
+Claude: a single export is downloaded as multiple `data-*.zip` batch files (plus a `manifest-*.json`) dropped into `Claude/`. Each batch zip contains its own `conversations.json` (same filename across batches, so they can't share a directory). `convert_claude_history.py` moves each download into a dated subdirectory `Claude/<YYYY-MM-DD>/` (date from the manifest), extracts each batch under `extracted/<batch>/`, and merges the per-batch conversation lists by `uuid`. Before overwriting the output it checks that the latest download is a superset of the most recent previous one (no conversations dropped, none with fewer messages) and refuses unless `--force` is given — a guard against an incomplete download clobbering good data. Within a conversation: messages are a flat list with a `sender` field; timestamps are ISO strings; content is a list of typed blocks (`text`, `tool_use`, `tool_result`).
 
 ChatGPT: conversations spread across multiple numbered JSON files (`conversations-000.json` etc.); messages stored as a tree (`mapping` dict), walked from `current_node` via parent links; timestamps are Unix epoch floats; `system` role messages are skipped; content types include `text`, `code`, `execution_output`, `tether_quote`, `tether_browsing_display`, `multimodal_text`, `system_error`.
