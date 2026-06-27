@@ -28,6 +28,33 @@ the same simple, greppable transcript so you can search your whole history with
 
 The transcript is written to `conversations/<Provider>.txt`.
 
+## Searching your history
+
+`search_history.py` searches **all four providers at once** for a regular
+expression and writes every matching conversation to its own Markdown file:
+
+```sh
+python3 search_history.py "PATTERN"             # -> search_results/
+python3 search_history.py -i "pattern" -o mydir # case-insensitive, custom dir
+```
+
+A conversation matches if the regex is found in its **title** or in the body of
+**any** message (question or answer). Each match is written as
+`<output-dir>/<Conversation Title>.md`, with `-2`/`-3`/… suffixes to
+disambiguate duplicate titles.
+
+Rather than re-parse the generated `.txt` transcripts, the search imports the
+four converters and reuses their exact parsing over the most recent archived
+download per provider — so every Markdown file contains all and exactly that one
+conversation. Run it from the repository root (or point `--base-dir` at the
+folder holding the provider directories).
+
+| Flag | Description |
+| --- | --- |
+| `-o, --output-dir DIR` | Output directory for the Markdown files (default: `search_results`) |
+| `-i, --ignore-case` | Case-insensitive matching |
+| `--base-dir DIR` | Directory holding the provider folders (default: current directory) |
+
 ## Getting your export
 
 | Provider | What you download | Where to put it |
@@ -99,6 +126,7 @@ convert_claude_history.py    Claude  (Claude/data-*.zip)              -> convers
 convert_chatgpt_history.py   ChatGPT (ChatGPT/*.zip)                  -> conversations/ChatGPT.txt
 convert_grok_history.py      Grok    (Grok/<uuid>.zip)               -> conversations/Grok.txt
 convert_qwen_history.py      Qwen    (Qwen/chat-export-*.json)        -> conversations/Qwen.txt
+search_history.py            search all four providers by regex        -> search_results/<title>.md
 Claude/ ChatGPT/ Grok/ Qwen/ provider export data (gitignored)
 conversations/               generated transcripts (gitignored)
 ```

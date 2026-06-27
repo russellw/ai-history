@@ -11,6 +11,7 @@ This repo converts AI chat history exports into a grep-friendly plain text forma
 - `convert_chatgpt_history.py` — converts ChatGPT export (`ChatGPT/*.zip`) → `conversations/ChatGPT.txt`
 - `convert_grok_history.py` — converts Grok export (`Grok/<uuid>.zip`) → `conversations/Grok.txt`
 - `convert_qwen_history.py` — converts Qwen export (`Qwen/chat-export-<epoch-ms>.json`) → `conversations/Qwen.txt`
+- `search_history.py` — searches all four providers by regex → one Markdown file per matching conversation under `search_results/`
 - `Claude/` — Claude export data (gitignored)
 - `ChatGPT/` — ChatGPT export data (gitignored); a single export zip containing sharded `conversations-*.json` plus `chat.html` and supporting assets
 - `Grok/` — Grok export data (gitignored)
@@ -39,6 +40,14 @@ Each conversation starts with a header line:
 Then each message:
     ROLE [YYYY-MM-DD HH:MM]:
       indented body text
+
+# Search tool (`search_history.py`)
+
+Takes a regular expression and writes every conversation that matches — in its title or in any message body — to its own Markdown file. Usage: `python3 search_history.py "PATTERN"` (also `-o/--output-dir`, default `search_results`; `-i/--ignore-case`; `--base-dir`, default the current directory, holding the provider folders).
+
+Rather than re-parse the generated `conversations/*.txt` (fragile), it **imports the four converters and reuses their parsing verbatim**, running over each provider's most recent dated download (via each module's `list_download_dirs` → newest). Per-provider adapters build a normalized conversation dict (`provider`, `title`, `created`, `updated`, `id`, `messages: [(role, ts, text)]`) from the same functions the converters use (`load_download`, `sort_conversations`, the per-provider thread reconstruction and text extraction), so each Markdown file contains all and exactly that one conversation, identical to what the `.txt` output would hold. Adding a new provider means adding an adapter + an entry in the `PROVIDERS` list.
+
+Output files are named after the conversation title, sanitized of filesystem-illegal characters and truncated to 120 chars, with `-2`/`-3`/… suffixes (case-insensitive) on duplicate titles or pre-existing files. Written as UTF-8 with UNIX line endings, like the converters.
 
 # Provider-specific notes
 
